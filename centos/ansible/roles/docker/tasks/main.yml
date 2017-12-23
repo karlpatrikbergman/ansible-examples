@@ -1,0 +1,25 @@
+- name: Install docker-py as a workaround for Ansible issue
+  pip: name=docker-py version=1.10.6
+
+- name: CentOS files are copied
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ centos_files }}"
+  tags: [docker]
+- name: CentOS package is installed
+  yum:
+    name: docker-engine
+    state: present
+  tags: [docker]
+
+- name: CentOS Daemon is reloaded
+  command: systemctl daemon-reload
+  tags: [docker]
+
+- name: CentOS service is running
+  service:
+    name: docker
+    state: running
+  tags: [docker]
+
